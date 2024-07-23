@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -14,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.example.okhttplearning.ui.theme.OkHttpLearningTheme
 import kotlinx.coroutines.launch
 import okhttp3.Call
@@ -29,12 +32,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            sendRequest()
             val corScope= rememberCoroutineScope()
-            Text(text = sendRequest())
+
 //            LaunchedEffect(key1 = ""){
 //
 //            corScope.launch {
-//                
+//
 //
 //            }
 //        }
@@ -44,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
 
 
+@Composable
 fun sendRequest():String{
     val client=OkHttpClient()
     var body=""
@@ -66,5 +71,6 @@ fun sendRequest():String{
     }catch (e:IOException){
         Log.i("OSHIBKE",e.toString())
     }
-        return body
+    Text(text = body)
+    return body
 }
