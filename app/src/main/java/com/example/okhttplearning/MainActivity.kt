@@ -13,7 +13,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,9 +53,11 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun sendRequest():String{
+fun sendRequest(){
     val client=OkHttpClient()
-    var body=""
+    var body by remember {
+        mutableStateOf("")
+    }
     val request=Request.Builder()
         .url("https://publicobject.com/helloworld.txt").build()
     try {
@@ -71,6 +77,5 @@ fun sendRequest():String{
     }catch (e:IOException){
         Log.i("OSHIBKE",e.toString())
     }
-    Text(text = body)
-    return body
+    Text(text = body, fontSize = 12.sp)
 }
