@@ -32,13 +32,14 @@ import okhttp3.Response
 import okio.IOException
 
 class MainActivity : ComponentActivity() {
+    var body = mutableStateOf("")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             sendRequest()
             val corScope= rememberCoroutineScope()
-
+            Text(text = body.value)
 //            LaunchedEffect(key1 = ""){
 //
 //            corScope.launch {
@@ -48,34 +49,30 @@ class MainActivity : ComponentActivity() {
 //        }
             }
     }
+    fun sendRequest(){
+        val client=OkHttpClient()
+        val request=Request.Builder()
+            .url("https://publicobject.com/helloworld.txt").build()
+        try {
+            client.newCall(request).enqueue(object : Callback{
+                override fun onFailure(call: Call, e: IOException) {
+                    e.printStackTrace()
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (!response.isSuccessful) throw IOException("запрос не был успешен ${response.code}-${response.message}")
+                    Log.i("REQUEST","${response.header("Server")}")
+                    body.value=response.body.string()
+                    Log.i("REQUEST", body.value)
+                }
+
+            })
+        }catch (e:IOException){
+            Log.i("OSHIBKE",e.toString())
+        }
+    }
 }
 
 
 
-@Composable
-fun sendRequest(){
-    val client=OkHttpClient()
-    var body by remember {
-        mutableStateOf("")
-    }
-    val request=Request.Builder()
-        .url("https://publicobject.com/helloworld.txt").build()
-    try {
-        client.newCall(request).enqueue(object : Callback{
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
 
-            override fun onResponse(call: Call, response: Response) {
-                if (!response.isSuccessful) throw IOException("запрос не был успешен ${response.code}-${response.message}")
-                Log.i("REQUEST","${response.header("Server")}")
-                body=response.body.string()
-                Log.i("REQUEST", body)
-            }
-
-        })
-    }catch (e:IOException){
-        Log.i("OSHIBKE",e.toString())
-    }
-    Text(text = body, fontSize = 12.sp)
-}
